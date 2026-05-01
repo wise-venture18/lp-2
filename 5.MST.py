@@ -4,40 +4,39 @@ import heapq
 
 class Graph:
     def __init__(self):
-        # hardcoded graph (undirected with weights)
-        self.graph = {
+        # graph stored as adjacency list (node: [(neighbor, weight)])
+        self.g = {
             0: [(1, 10), (2, 6), (3, 5)],
             1: [(0, 10), (3, 15)],
             2: [(0, 6), (3, 4)],
             3: [(0, 5), (1, 15), (2, 4)]
         }
 
-    def prim_mst(self, start=0):
-        visited = set()
-        min_heap = [(0, start)]   # (weight, node)
+    def prim(self):
+        visited = []
+        heap = [(0, 0)]   # (weight, node)
+        cost = 0
 
-        total_cost = 0
+        print("MST:")
 
-        print("Edges in MST:")
-
-        while min_heap:
-            weight, node = heapq.heappop(min_heap)
+        while heap:
+            w, node = heapq.heappop(heap)
 
             if node in visited:
                 continue
 
-            visited.add(node)
-            total_cost += weight
+            visited.append(node)
+            cost += w
 
-            print(f"Node {node} included with cost {weight}")
+            print(node, "-> cost:", w)
 
-            for neighbor, w in self.graph[node]:
-                if neighbor not in visited:
-                    heapq.heappush(min_heap, (w, neighbor))
+            for nbr, wt in self.g[node]:
+                if nbr not in visited:
+                    heapq.heappush(heap, (wt, nbr))
 
-        print("Total cost of MST:", total_cost)
+        print("Total cost:", cost)
 
 
-# -------- main --------
+# main
 g = Graph()
-g.prim_mst(0)
+g.prim()
