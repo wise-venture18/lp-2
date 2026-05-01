@@ -1,43 +1,47 @@
 #6.	  Implement Greedy search algorithm for Prim's Minimal Spanning Tree Algorithm 
+
 import heapq
 
-class Graph:
-    def __init__(self):
-        # hardcoded weighted undirected graph
-        self.g = {
-            0: [(1, 10), (2, 6), (3, 5)],
-            1: [(0, 10), (3, 15)],
-            2: [(0, 6), (3, 4)],
-            3: [(0, 5), (1, 15), (2, 4)]
-        }
+def prim_mst(graph):
+    start = list(graph.keys())[0]   # start from any node
+    visited = set([start])
+    min_heap = []
 
-    def prim(self):
-        visited = []              # list to store visited nodes
-        heap = [(0, 0)]           # (weight, node)
-        total_cost = 0
+    # add edges of starting node
+    for neighbor, weight in graph[start]:
+        heapq.heappush(min_heap, (weight, start, neighbor))
 
-        print("Edges in MST:")
+    mst = []
+    total_cost = 0
 
-        while heap:
-            w, node = heapq.heappop(heap)
+    while min_heap:
+        weight, u, v = heapq.heappop(min_heap)
 
-            # skip if already visited
-            if node in visited:
-                continue
+        if v not in visited:
+            visited.add(v)
+            mst.append((u, v, weight))
+            total_cost += weight
 
-            visited.append(node)
-            total_cost += w
+            # add new edges
+            for neighbor, w in graph[v]:
+                if neighbor not in visited:
+                    heapq.heappush(min_heap, (w, v, neighbor))
 
-            print(node, "-> cost:", w)
-
-            # check all neighbours
-            for nbr, wt in self.g[node]:
-                if nbr not in visited:
-                    heapq.heappush(heap, (wt, nbr))
-
-        print("Total cost of MST:", total_cost)
+    return mst, total_cost
 
 
-# main
-g = Graph()
-g.prim()
+# Example graph
+graph = {
+    'A': [('B', 2), ('C', 3)],
+    'B': [('A', 2), ('C', 1), ('D', 4)],
+    'C': [('A', 3), ('B', 1), ('D', 5)],
+    'D': [('B', 4), ('C', 5)]
+}
+
+mst, cost = prim_mst(graph)
+
+print("Minimum Spanning Tree:")
+for u, v, w in mst:
+    print(u, "-", v, ":", w)
+
+print("Total Cost:", cost)
