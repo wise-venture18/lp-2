@@ -1,51 +1,56 @@
 # 2.	Implement  Breadth First Search algorithm, Use an undirected graph and develop a recursive algorithm for searching all the vertices of a graph or tree data structure. 
 
-from collections import deque   # used to create a queue
+from collections import deque
 
 class Graph:
     def __init__(self, v):
-        self.v = v              # total number of vertices
+        self.v = v
         self.graph = {}
 
-        # create empty adjacency list for each vertex
+        # create adjacency list
         for i in range(v):
             self.graph[i] = []
 
-    # function to add edge (undirected graph)
-    def add_edge(self, a, b):
-        self.graph[a].append(b)   # add b to a's list
-        self.graph[b].append(a)   # add a to b's list
+    # add edge (undirected)
+    def add_edge(self, u, v):
+        self.graph[u].append(v)
+        self.graph[v].append(u)
 
-    # BFS traversal function
+    # recursive BFS function
+    def bfs_recursive(self, queue, visited):
+        if not queue:
+            return
+
+        node = queue.popleft()
+        print(node, end=" ")
+
+        # visit neighbours
+        for nbr in self.graph[node]:
+            if not visited[nbr]:
+                visited[nbr] = True
+                queue.append(nbr)
+
+        # recursive call
+        self.bfs_recursive(queue, visited)
+
+    # wrapper function
     def bfs(self, start):
-        visited = [False] * self.v   # mark all nodes as not visited
-        q = deque()                  # create an empty queue
+        visited = [False] * self.v
+        queue = deque()
 
-        visited[start] = True        # mark starting node as visited
-        q.append(start)              # add it to queue
+        visited[start] = True
+        queue.append(start)
 
         print("BFS Traversal:", end=" ")
-
-        # loop until queue becomes empty
-        while q:
-            node = q.popleft()       # remove first element from queue
-            print(node, end=" ")     # print the node
-
-            # check all neighbours of current node
-            for neighbour in self.graph[node]:
-                if not visited[neighbour]:     # if not visited
-                    visited[neighbour] = True  # mark as visited
-                    q.append(neighbour)       # add to queue
+        self.bfs_recursive(queue, visited)
 
 
-# -------- main program --------
+# -------- main --------
 g = Graph(5)
 
-# adding edges
 g.add_edge(0, 1)
 g.add_edge(0, 2)
 g.add_edge(1, 3)
 g.add_edge(1, 4)
 
-# start BFS from node 0
 g.bfs(0)
